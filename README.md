@@ -29,3 +29,28 @@ Of course use arduino IDE, why bother use other language, as arduino already use
 | C#        | .NET IoT      | .NET IoT      |
 | Java      | Pi4J          | Pi4J          |
 | Javascript| rpio          | rpio          |
+
+## C
+### Preparing WiringPi library for Raspberry Pi
+Versi WiringPi pada raspberry pi sebelumnya adalah 2.50
+Untuk menginstall versi terbaru, hapus WiringPi dengan
+```sh
+# Hapus wiringpi
+$ sudo apt purge wiringpi
+# Hapus semua yang mengingat lokasi wiringpi
+$ hash -r
+```
+
+Reinstall versi terbaru dari fork di github:
+```sh
+$ git clone https://github.com/WiringPi/WiringPi.git
+$ cd WiringPi
+$ ./build
+```
+Cek versi terbaru
+```sh
+$ gpio -v
+# Output
+gpio version: 2.70
+...
+```
