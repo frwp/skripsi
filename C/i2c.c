@@ -3,27 +3,27 @@
  * I2C master code @ Raspberry Pi in C language
  * @author Fransiskus Rian Wardana Putra
  * 28 Oct 2022
- * 
+ *
  * Kode ini digunakan untuk tugas akhir S1 Ilmu Komputer dengan topik
  * Bahasa pemrograman dan protokol komunikasi untuk IoT
- * 
+ *
  * Kode ini menggunakan library WiringPi untuk melakukan setup ke hardware I2C
  * pada perangkat Raspberry Pi. Lihat wiringpi.com dan github.com/WiringPi
- * 
+ *
  * Perangkat dihubungkan sebagai berikut:
  * (Raspberry Pi)   (Arduino Nano)
  * GND          ->  GND
  * 5V           ->  5V (VCC)
  * SDA          ->  A4 (SDA) (dengan pull-up resistor 4.7K ke VCC)
  * SCL          ->  A5 (SCL) (dengan pull-up resistor 4.7K ke VCC)
- * 
+ *
  * To build this file, run:
  * > gcc i2c.c -lwiringpi -o i2c
-*/
+ */
 
-#include <stdio.h>      // print
-#include <stdlib.h>     // exit()
-#include <unistd.h>     // For sleep() and read()
+#include <stdio.h>  // print
+#include <stdlib.h> // exit()
+#include <unistd.h> // For sleep() and read()
 #include <wiringPi.h>
 #include <wiringPiI2C.h>
 
