@@ -15,7 +15,6 @@
 #if I2CDEV_IMPLEMENTATION == I2CDEV_ARDUINO_WIRE
 #include "Wire.h"
 #endif
-// #include <Wire.h>
 
 // class default I2C address is 0x68
 // specific I2C addresses may be passed as a parameter here
@@ -41,7 +40,7 @@ MPU6050 mpu;
 // not compensated for orientation, so +X is always +X according to the
 // sensor, just without the effects of gravity. If you want acceleration
 // compensated for orientation, us OUTPUT_READABLE_WORLDACCEL instead.
-#define OUTPUT_READABLE_REALACCEL
+// #define OUTPUT_READABLE_REALACCEL
 
 #define INTERRUPT_PIN 2 // use pin 2 on Arduino Uno & most boards
 #define LED_PIN 13      // (Arduino is 13, Teensy is 11, Teensy++ is 6)
@@ -109,14 +108,17 @@ void setup()
   Serial.println(F("Testing device connections..."));
   Serial.println(mpu.testConnection() ? F("MPU6050 connection successful") : F("MPU6050 connection failed"));
 
-  // wait for ready
-  Serial.println(F("\nSend any character to begin DMP programming and demo: "));
-  while (Serial.available() && Serial.read())
-    ; // empty buffer
-  while (!Serial.available())
-    ; // wait for data
-  while (Serial.available() && Serial.read())
-    ; // empty buffer again
+  // // wait for ready
+  // Serial.println(F("\nSend any character to begin DMP programming and demo: "));
+  // while (Serial.available() && Serial.read())
+  //   ; // empty buffer
+  // while (!Serial.available())
+  //   ; // wait for data
+  // while (Serial.available() && Serial.read())
+  //   ; // empty buffer again
+
+  // Wait 1 second
+  delay(1000);
 
   // load and configure the DMP
   Serial.println(F("Initializing DMP..."));
@@ -180,57 +182,6 @@ void loop()
   // read a packet from FIFO
   if (mpu.dmpGetCurrentFIFOPacket(fifoBuffer))
   { // Get the Latest packet
-#ifdef OUTPUT_READABLE_QUATERNION
-    // display quaternion values in easy matrix form: w x y z
-    mpu.dmpGetQuaternion(&q, fifoBuffer);
-    Serial.print("quat\t");
-    Serial.print(q.w);
-    Serial.print("\t");
-    Serial.print(q.x);
-    Serial.print("\t");
-    Serial.print(q.y);
-    Serial.print("\t");
-    Serial.println(q.z);
-#endif
-
-#ifdef OUTPUT_READABLE_EULER
-    // display Euler angles in degrees
-    mpu.dmpGetQuaternion(&q, fifoBuffer);
-    mpu.dmpGetEuler(euler, &q);
-    Serial.print("euler\t");
-    Serial.print(euler[0] * 180 / M_PI);
-    Serial.print("\t");
-    Serial.print(euler[1] * 180 / M_PI);
-    Serial.print("\t");
-    Serial.println(euler[2] * 180 / M_PI);
-#endif
-
-#ifdef OUTPUT_READABLE_YAWPITCHROLL
-    // display Euler angles in degrees
-    mpu.dmpGetQuaternion(&q, fifoBuffer);
-    mpu.dmpGetGravity(&gravity, &q);
-    mpu.dmpGetYawPitchRoll(ypr, &q, &gravity);
-    Serial.print("ypr\t");
-    Serial.print(ypr[0] * 180 / M_PI);
-    Serial.print("\t");
-    Serial.print(ypr[1] * 180 / M_PI);
-    Serial.print("\t");
-    Serial.println(ypr[2] * 180 / M_PI);
-#endif
-
-#ifdef OUTPUT_READABLE_REALACCEL
-    // display real acceleration, adjusted to remove gravity
-    mpu.dmpGetQuaternion(&q, fifoBuffer);
-    mpu.dmpGetAccel(&aa, fifoBuffer);
-    mpu.dmpGetGravity(&gravity, &q);
-    mpu.dmpGetLinearAccel(&aaReal, &aa, &gravity);
-    Serial.print("areal\t");
-    Serial.print(aaReal.x);
-    Serial.print("\t");
-    Serial.print(aaReal.y);
-    Serial.print("\t");
-    Serial.println(aaReal.z);
-#endif
 
 #ifdef OUTPUT_READABLE_WORLDACCEL
     // display initial world-frame acceleration, adjusted to remove gravity
@@ -248,23 +199,10 @@ void loop()
     Serial.println(aaWorld.z);
 #endif
 
-#ifdef OUTPUT_TEAPOT
-    // display quaternion values in InvenSense Teapot demo format:
-    teapotPacket[2] = fifoBuffer[0];
-    teapotPacket[3] = fifoBuffer[1];
-    teapotPacket[4] = fifoBuffer[4];
-    teapotPacket[5] = fifoBuffer[5];
-    teapotPacket[6] = fifoBuffer[8];
-    teapotPacket[7] = fifoBuffer[9];
-    teapotPacket[8] = fifoBuffer[12];
-    teapotPacket[9] = fifoBuffer[13];
-    Serial.write(teapotPacket, 14);
-    teapotPacket[11]++; // packetCount, loops at 0xFF on purpose
-#endif
-
     // blink LED to indicate activity
     blinkState = !blinkState;
     digitalWrite(LED_PIN, blinkState);
+    getMeasuring();
   }
   blinkState = !blinkState;
   digitalWrite(LED_BUILTIN, blinkState); // turn the LED off by making the voltage LOW
