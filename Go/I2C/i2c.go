@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"time"
 
 	"periph.io/x/conn/v3/i2c"
 	"periph.io/x/conn/v3/i2c/i2creg"
@@ -20,10 +21,13 @@ func main() {
 
 	device := &i2c.Dev{Addr: 4, Bus: bus}
 
-	write := []byte{0x10}
-	read := make([]byte, 5)
-	if err := device.Tx(write, read); err != nil {
-		log.Fatal(err)
+	for {
+		write := []byte{0x10}
+		read := make([]byte, 5)
+		if err := device.Tx(write, read); err != nil {
+			log.Fatal(err)
+		}
+		fmt.Printf("%v\n", string(read[:]))
+		time.Sleep(time.Second * 2)
 	}
-	fmt.Printf("%v\n", read)
 }
