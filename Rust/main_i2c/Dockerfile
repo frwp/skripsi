@@ -10,4 +10,4 @@ WORKDIR /app
 
 ENV CARGO_TARGET_ARMV7_UNKNOWN_LINUX_GNUEABIHF_LINKER=arm-linux-gnueabihf-gcc CC_armv7_unknown_Linux_gnueabihf=arm-linux-gnueabihf-gcc
 
-CMD ["cargo", "build", "--target", "armv7-unknown-linux-gnueabihf"]
+CMD ["cargo", "build", "--release", "--target", "armv7-unknown-linux-gnueabihf"]

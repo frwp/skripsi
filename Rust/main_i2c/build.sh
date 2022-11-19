@@ -1,8 +1,11 @@
 #!/bin/sh
 
-# we need to install cross build gcc dependency
-# install gcc-arm-linux-gnu
+# Build docker image
+docker build . -t rust_cross_compile/armv7
 
-readonly  TARGET_ARCH=armv7-unknown-linux-gnueabihf
+# Compile the app using created image
+docker run --rm -v $(pwd):/app rust_cross_compile/armv7
 
-cargo build --target=${TARGET_ARCH}
+# if command -v rsync &> /dev/null
+# then
+#     rsync -P --rsh=ssh 
