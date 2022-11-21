@@ -13,6 +13,28 @@ Anyway, ini spek dasar:
 
 > \* 20 MHz is theoretical value, as the chip will automatically tune it down to match max clock (16 MHz for ATMega328p 5V as Nano)
 
+## Routing kabel
+ Perangkat dihubungkan sebagai berikut:
+### I2C
+```
+ (Raspberry Pi)     (Arduino Nano)
+ GND            ->  GND
+ 5V             ->  5V (VCC)
+ SDA            ->  A4 (SDA) (dengan pull-up resistor 4.7K ke VCC)
+ SCL            ->  A5 (SCL) (dengan pull-up resistor 4.7K ke VCC)
+ ```
+ 
+ ### SPI
+```
+(Raspberry Pi)      (Arduino Nano)
+GND             ->  GND
+5V              ->  5V (VCC)
+MISO            ->  D12 (CIPO)
+MOSI            ->  D11 (COPI)
+SCLK            ->  D13 (SCK)
+CE0             ->  D10 (SS)
+```
+
 ## Programming language for arduino
 Of course use arduino IDE, why bother use other language, as arduino already use C++ base
 
