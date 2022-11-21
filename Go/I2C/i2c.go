@@ -30,13 +30,15 @@ func main() {
 
 	for {
 		start_time := time.Now()
+		write := []byte{0x10}
 		read := make([]byte, MESSAGE_LENGTH)
 
-		if err := device.Tx(nil, read); err != nil {
+		if err := device.Tx(write, read); err != nil {
 			log.Fatal(err)
 		}
 
 		elapsed := time.Since(start_time)
+		fmt.Println(read)
 		fmt.Printf("%v\n", string(read[:]))
 		time.Sleep(time.Second*2 - elapsed)
 	}
