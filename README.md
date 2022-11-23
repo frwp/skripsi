@@ -17,11 +17,11 @@ Anyway, ini spek dasar:
  Perangkat dihubungkan sebagai berikut:
 ### I2C
 ```
- (Raspberry Pi)     (Arduino Nano)
- GND            ->  GND
- 5V             ->  5V (VCC)
- SDA            ->  A4 (SDA) (dengan pull-up resistor 4.7K ke VCC)
- SCL            ->  A5 (SCL) (dengan pull-up resistor 4.7K ke VCC)
+(Raspberry Pi)      (Arduino Nano)
+GND             ->  GND
+5V              ->  5V (VCC)
+3 (SDA)         ->  A4 (SDA) (dengan pull-up resistor 4.7K ke VCC)
+5 (SCL)         ->  A5 (SCL) (dengan pull-up resistor 4.7K ke VCC)
  ```
  
  ### SPI
