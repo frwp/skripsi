@@ -1,19 +1,19 @@
-import traceback
 import smbus2 as smbus
 import time
 
-bus = smbus.SMBus(1)
+bus = smbus.SMBus()
 SLAVE_ADDRESS = 0x04
-MSG_LENGTH = 5          # 5 bytes of data expected
+MSG_LENGTH = 20          # 5 bytes of data expected
 
 while True:
     try:
         rep = bus.read_i2c_block_data(SLAVE_ADDRESS, 0, MSG_LENGTH)
     except:
-        traceback.print_exception()
-        exit(1)
+        continue
     payload = ""
     for i in range(MSG_LENGTH):     # Byte expected
         payload += chr(rep[i])
     print(payload)
-    time.sleep(0)
+    print(rep)
+    time.sleep(2)
+    
