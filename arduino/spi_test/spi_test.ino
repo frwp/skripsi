@@ -1,4 +1,9 @@
 #include <SPI.h>
+#define SS PIN_SPI_SS
+#define MOSI PIN_SPI_MOSI
+#define MISO PIN_SPI_MISO
+#define SCLK PIN_SPI_SCK
+#define LED PIN_A7
 
 /**
  * Quick reference
@@ -15,30 +20,60 @@
  * CPHA = Samples data on the falling edge of the data clock when 1, rising edge when 0
  * SPR1 and SPR0 - Sets the SPI speed, 00 is fastest (4MHz) 11 is slowest (250KHz)
 */
+String data;
+char cdata[10];
+volatile byte pos;
+volatile bool processed;
+bool blinkState = false;
 
 void setup() {
-  // put your setup code here, to run once:
-  
+  // setup serial communication for debug
+  Serial.begin(9600);
+
   // unlike in master mode when we could just call
   // SPI.beginTransaction() ,
   // set SPI to slave mode by enabling SPE bit
   SPCR |= (1 << SPE);
+  SPI.attachInterrupt();
 
   // code above resulting in SPCR = 01000000
   pinMode(MISO, OUTPUT);
-  
+  pinMode(MOSI, INPUT);
+  pinMode(SCLK, INPUT);
+  pinMode(SS, INPUT);
+
+  pos = 0;
+  processed = false;
+  Serial.println(F("Start."));
 }
 
 // SPI interrupt routine
 // called every SPI transfer cycle.
 ISR (SPI_STC_vect) {
-  // byte b = SPDR;
+  byte b = SPDR;
+  if (b == 0x10) {
+    pos = 0;
+    processed = true;
+  }
+  
+  if (pos < 8)
+  {
+    SPDR = cdata[pos++];
+  }
+  else
+  {
+    processed = false;
+  }
+  // SPDR = b + 2;
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
-  String data = "test ";
-  char cdata[data.length() + 1] = data.toCharArray(cdata, data.length() + 1);
-
-  SPI.transfer(cdata, strlen(cdata));
+  data = "tester ";
+  if (!processed)
+    data.toCharArray(cdata, data.length() + 1);
+  // Serial.println(cdata);
+  
+  delay(500);
+  digitalWrite(LED, blinkState);
+  blinkState = !blinkState;
 }
