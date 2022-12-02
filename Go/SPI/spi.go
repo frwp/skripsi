@@ -11,10 +11,12 @@ import (
 	"periph.io/x/host/v3"
 )
 
-const MESSAGE_LENGTH = 5
+const MESSAGE_LENGTH = 42
 
 func main() {
 	host.Init()
+
+	// open the next available "port" (usually /dev/spidev0.0 or /dev/spidev0.1)
 	port, err := spireg.Open("")
 	if err != nil {
 		log.Fatal(err)
@@ -31,9 +33,11 @@ func main() {
 
 	for {
 		start_time := time.Now()
+		write := make([]byte, MESSAGE_LENGTH)
+		write[0] = 0x10
 		read := make([]byte, MESSAGE_LENGTH)
 
-		if err := conn.Tx(nil, read); err != nil {
+		if err := conn.Tx(write, read); err != nil {
 			log.Fatal(err)
 		}
 

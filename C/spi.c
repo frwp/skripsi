@@ -41,7 +41,7 @@ int main(void)
 		buf[0] = 0x10;
 		wiringPiSPIDataRW(SPI_CHANNEL, buf, 1);
 
-		for (int i = 0; i < DATA_LENGTH; i++) /* 42 is approximated data length */
+		for (int i = 0; i < MESSAGE_LENGTH; i++) /* 42 is approximated data length */
 		{
 			// dummy byte, discarded on slave.
 			buf[0] = 0x01;
@@ -53,7 +53,7 @@ int main(void)
 			data[i] = buf[0];
 		}
 
-		for (int i = 0; i < DATA_LENGTH; i++)
+		for (int i = 0; i < MESSAGE_LENGTH; i++)
 		{
 			printf("%c", data[i]);
 		}
