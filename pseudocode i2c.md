@@ -26,7 +26,7 @@ while True:
         exit(1)
 
     # convert buffer bytes to string
-    for i in 0 .. MESSAGE_LENGTH:
+    for i in [ 0 .. MESSAGE_LENGTH ]:
         payload = payload + char(buffer[i])
     
     # process payload (send to server)

@@ -11,9 +11,11 @@ import (
 	"periph.io/x/host/v3"
 )
 
-const MESSAGE_LENGTH = 42
+const MESSAGE_LENGTH = 50
 
 func main() {
+
+	// initiate periph library
 	host.Init()
 
 	// open the next available "port" (usually /dev/spidev0.0 or /dev/spidev0.1)
@@ -22,6 +24,7 @@ func main() {
 		log.Fatal(err)
 	}
 
+	// defer closing port when program exits
 	defer port.Close()
 
 	// From periph.io: the actual speed is lower than stated here,
@@ -31,16 +34,24 @@ func main() {
 		log.Fatal(err)
 	}
 
+	// forever loop
 	for {
+		// start counting time
 		start_time := time.Now()
+
+		// alocate memory for buffer
 		write := make([]byte, MESSAGE_LENGTH)
-		write[0] = 0x10
 		read := make([]byte, MESSAGE_LENGTH)
 
+		// mark begin byte
+		write[0] = 0x10
+
+		// do spi transaction, full duplex
 		if err := conn.Tx(write, read); err != nil {
 			log.Fatal(err)
 		}
 
+		// calculate elapsed time
 		elapsed := time.Since(start_time)
 		fmt.Printf("%v\n", string(read[:]))
 		time.Sleep(time.Second*2 - elapsed)
