@@ -1,4 +1,3 @@
-
 // Program for sending data from arduino nano and sensor to raspberry pi
 // Part of skripsi by Rian Wardana
 // SPI version
@@ -22,7 +21,7 @@
 #include <DHT.h>
 #include <DHT_U.h>
 #include <Wire.h>
-#include <MPU6050_light.h>
+#include <MPU6050.h>
 #include <SPI.h>
 #include <stdlib.h>
 
@@ -35,11 +34,11 @@
 #define MOSI PIN_SPI_MOSI
 #define MISO PIN_SPI_MISO
 #define SCLK PIN_SPI_SCK
-#define MAX_LENGTH 42
+#define MAX_LENGTH 50
 
 // init DHT22 and MPU6050 object here
 DHT dht(DHTPIN, DHTTYPE);
-MPU6050 mpu(Wire);
+MPU6050 mpu;
 
 // define vars
 char cdata[MAX_LENGTH];
@@ -47,27 +46,81 @@ unsigned long timer = 0;
 bool blinkState = false;
 volatile byte pos;
 volatile bool processed;
-float hum, temp, acc[3];
+float hum, temp;
 char chum[7], ctemp[7], cacc0[7], cacc1[7], cacc2[7];
 
 void mpu_setup()
 {
   // Initialize device
-  byte status = mpu.begin();
-  Serial.println(F("MPU6050 status: "));
-  Serial.println(status);
+  Serial.println(F("Initialize MPU6050."));
 
-  // stop everything if sensor is not ok
-  while (status != 0)
+  while (!mpu.begin(MPU6050_SCALE_2000DPS, MPU6050_RANGE_2G))
   {
+    Serial.println(F("Could not find a valid MPU6050 sensor, check wiring"));
+    delay(500);
   }
 
-  Serial.println(F("Calculating offsets, do not move MPU6050..."));
+  checkSettings();
+}
 
-  // wait for ready
-  delay(1000);
+void checkSettings()
+{
+  Serial.println();
 
-  mpu.calcOffsets(false, true);
+  Serial.print(" * Sleep Mode:            ");
+  Serial.println(mpu.getSleepEnabled() ? "Enabled" : "Disabled");
+
+  Serial.print(" * Clock Source:          ");
+  switch (mpu.getClockSource())
+  {
+  case MPU6050_CLOCK_KEEP_RESET:
+    Serial.println("Stops the clock and keeps the timing generator in reset");
+    break;
+  case MPU6050_CLOCK_EXTERNAL_19MHZ:
+    Serial.println("PLL with external 19.2MHz reference");
+    break;
+  case MPU6050_CLOCK_EXTERNAL_32KHZ:
+    Serial.println("PLL with external 32.768kHz reference");
+    break;
+  case MPU6050_CLOCK_PLL_ZGYRO:
+    Serial.println("PLL with Z axis gyroscope reference");
+    break;
+  case MPU6050_CLOCK_PLL_YGYRO:
+    Serial.println("PLL with Y axis gyroscope reference");
+    break;
+  case MPU6050_CLOCK_PLL_XGYRO:
+    Serial.println("PLL with X axis gyroscope reference");
+    break;
+  case MPU6050_CLOCK_INTERNAL_8MHZ:
+    Serial.println("Internal 8MHz oscillator");
+    break;
+  }
+
+  Serial.print(" * Accelerometer:         ");
+  switch (mpu.getRange())
+  {
+  case MPU6050_RANGE_16G:
+    Serial.println("+/- 16 g");
+    break;
+  case MPU6050_RANGE_8G:
+    Serial.println("+/- 8 g");
+    break;
+  case MPU6050_RANGE_4G:
+    Serial.println("+/- 4 g");
+    break;
+  case MPU6050_RANGE_2G:
+    Serial.println("+/- 2 g");
+    break;
+  }
+
+  Serial.print(" * Accelerometer offsets: ");
+  Serial.print(mpu.getAccelOffsetX());
+  Serial.print(" / ");
+  Serial.print(mpu.getAccelOffsetY());
+  Serial.print(" / ");
+  Serial.println(mpu.getAccelOffsetZ());
+
+  Serial.println();
 }
 
 void dht_setup()
@@ -130,27 +183,20 @@ ISR(SPI_STC_vect)
 
 void loop()
 {
-  // pull data from sensor when not processing SPI call
-  if (!processed)
-  {
-    mpu.update();
-  }
-  if (millis() - timer > 1000) // update led every sec
+  if (!processed && (millis() - timer > 2000)) // update led every sec
   {
     hum = dht.readHumidity();
     temp = dht.readTemperature();
 
-    acc[0] = mpu.getAccX();
-    acc[1] = mpu.getAccY();
-    acc[2] = mpu.getAccZ();
+    Vector normAccel = mpu.readNormalizeAccel();
 
     dtostrf(hum, 2, 2, chum);
     dtostrf(temp, 2, 2, ctemp);
-    dtostrf(acc[0], 2, 2, cacc0);
-    dtostrf(acc[1], 2, 2, cacc1);
-    dtostrf(acc[2], 2, 2, cacc2);
-    sprintf(cdata, "|h=%s|t=%s|x=%s,y=%s,z=%s|", chum, ctemp, cacc0, cacc1, cacc2);
-    snprintf()
+    dtostrf(normAccel.XAxis, 2, 2, cacc0);
+    dtostrf(normAccel.YAxis, 2, 2, cacc1);
+    dtostrf(normAccel.ZAxis, 2, 2, cacc2);
+    // sprintf(cdata, "|h=%s|t=%s|x=%s,y=%s,z=%s|", chum, ctemp, cacc0, cacc1, cacc2);
+    snprintf(cdata, 50, "|h=%s|t=%s|x=%s,y=%s,z=%s|", chum, ctemp, cacc0, cacc1, cacc2);
     Serial.println(cdata);
 
     // blinks to indicate program is running

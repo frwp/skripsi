@@ -24,6 +24,6 @@ Ini yang basic, I2C dan SPI pakai skema ini untuk menyambungkan sensor dengan ar
 DHT.h   ->  DHT22
 DHT_U.h ->
 
-I2Cdev.h                        -> GY-521 MPU6050
-MPU6050_6Axis_MotionApps20.h    ->
+MPU6050.h                        -> GY-521 MPU6050
+https://github.com/jarzebski/Arduino-MPU6050
 ```
