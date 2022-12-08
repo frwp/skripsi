@@ -15,7 +15,7 @@
 
 #define SPI_CHANNEL 0
 #define SPI_CLOCK_SPEED 400000
-#define DATA_LENGTH 42
+#define DATA_LENGTH 58
 
 int main(void)
 {

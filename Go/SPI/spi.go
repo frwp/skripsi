@@ -11,7 +11,7 @@ import (
 	"periph.io/x/host/v3"
 )
 
-const MESSAGE_LENGTH = 50
+const MESSAGE_LENGTH = 58
 
 func main() {
 

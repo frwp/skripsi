@@ -8,7 +8,7 @@ DEV = 0
 spi = spidev.SpiDev()
 spi.open(BUS, DEV)      # lihat di /dev/spidev<bus>.<device>
 
-MESSAGE_LENGTH = 42
+MESSAGE_LENGTH = 58
 
 # settings, SPI mode 0, max speed 400kHz
 spi.max_speed_hz = 400000
