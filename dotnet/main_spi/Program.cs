@@ -6,8 +6,8 @@ public class Main_Spi
 {
     public static void Main()
     {
-        // instantiate our spi reader class, with data length = 50
-        ReaderWriter readerWriter = new ReaderWriter(50);
+        // instantiate our spi reader class, with data length = 58
+        ReaderWriter readerWriter = new ReaderWriter(58);
 
         // instantiate stopwatch object, for measuring delays
         Stopwatch timer = new Stopwatch();
