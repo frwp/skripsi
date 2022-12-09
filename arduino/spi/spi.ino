@@ -19,7 +19,6 @@
  */
 
 #include <DHT.h>
-#include <DHT_U.h>
 #include <Wire.h>
 #include <MPU6050.h>
 #include <SPI.h>
@@ -47,7 +46,7 @@ bool blinkState = false;
 volatile byte pos;
 volatile bool processed;
 float hum, temp;
-char chum[7], ctemp[7], cacc0[7], cacc1[7], cacc2[7];
+char hum_c[7], temp_c[7], acc0_c[7], acc1_c[7], acc2_c[7];
 
 void mpu_setup()
 {
@@ -190,13 +189,13 @@ void loop()
 
     Vector normAccel = mpu.readNormalizeAccel();
 
-    dtostrf(hum, 2, 2, chum);
-    dtostrf(temp, 2, 2, ctemp);
-    dtostrf(normAccel.XAxis, 2, 2, cacc0);
-    dtostrf(normAccel.YAxis, 2, 2, cacc1);
-    dtostrf(normAccel.ZAxis, 2, 2, cacc2);
+    dtostrf(hum, 2, 2, hum_c);
+    dtostrf(temp, 2, 2, temp_c);
+    dtostrf(normAccel.XAxis, 2, 2, acc0_c);
+    dtostrf(normAccel.YAxis, 2, 2, acc1_c);
+    dtostrf(normAccel.ZAxis, 2, 2, acc2_c);
     // sprintf(cdata, "|h=%s|t=%s|x=%s,y=%s,z=%s|", chum, ctemp, cacc0, cacc1, cacc2);
-    snprintf(cdata, 50, "|h=%s|t=%s|x=%s,y=%s,z=%s|", chum, ctemp, cacc0, cacc1, cacc2);
+    snprintf(cdata, 50, "|h=%s|t=%s|x=%s,y=%s,z=%s|", hum_c, temp_c, acc0_c, acc1_c, acc2_c);
     Serial.println(cdata);
 
     // blinks to indicate program is running
