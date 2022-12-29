@@ -2,21 +2,23 @@
 #include <Wire.h>
 #include <stdlib.h>
 
-#define LED_PIN A1
-#define DHTPIN 7
+#define LED_PIN PIN_A1
+#define DHTPIN PIN7
 #define DHTTYPE DHT22
 #define SLAVE_ADDRESS 0x04
 #define MAX_LENGTH 32
-#define xInput A2
-#define yInput A3
-#define zInput A6
-
-DHT dht(DHTPIN, DHTTYPE);
+#define xInput PIN_A2
+#define yInput PIN_A3
+#define zInput PIN_A6
 
 const int sampleSize = 10;
 const int RawMin = 0;
 const int RawMax = 1023;
 
+// init DHT22
+DHT dht(DHTPIN, DHTTYPE);
+
+// define vars
 char cdata[MAX_LENGTH];
 unsigned long timer = 0;
 bool blinkState = false;
@@ -63,21 +65,21 @@ float readZ()
 
 void calibrate_gy61()
 {
-    int zeroG = 512; // analog input is 0-1023, 512 is the median.
-    long xVal = 0;
-    long yVal = 0;
-    long zVal = 0;
-    int counter = 0;
-    while (counter < 100)
+    int zeroG = 512; // analog input is 0-1023, 512 is the median value
+    delay(1000);
+
+    // calibrate the x,y,z axis
+    // read 100 samples from each axis and average them out
+    int xTotal = 0, yTotal = 0, zTotal = 0;
+    for (int i = 0; i < 100; i++)
     {
-        xVal += readAxis(xInput);
-        yVal += readAxis(yInput);
-        zVal += readAxis(zInput);
-        counter++;
+        xTotal += readAxis(xInput);
+        yTotal += readAxis(yInput);
+        zTotal += readAxis(zInput);
     }
-    xOffset = zeroG - xVal / 100;
-    yOffset = zeroG - yVal / 100;
-    zOffset = zeroG - zVal / 100;
+    xOffset = zeroG - abs(xTotal / 100);
+    yOffset = zeroG - abs(yTotal / 100);
+    zOffset = zeroG - abs(zTotal / 100);
     Serial.println(F("Offset is: "));
     Serial.print(F("xOffset:\t"));
     Serial.println(xOffset);
@@ -124,7 +126,7 @@ void setup()
 
 void loop()
 {
-    if (!isPulled && (millis() - timer > 500)) // update led every sec
+    if (!isPulled && (millis() - timer > 500)) // loop every half sec
     {
         hum = dht.readHumidity();
         temp = dht.readTemperature();
