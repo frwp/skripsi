@@ -38,6 +38,9 @@ CE0             ->  D10 (SS)
 ## Programming language for arduino
 Of course use arduino IDE, why bother use other language, as arduino already use C++ base
 
+Arduino file used for I2C is test_analog, because I can only make the device works using
+ADXL335 sensor, which uses analog interface, and not MPU6050.
+
 ## Programming language for raspi
 
 | Language  | Library I2C   | Library SPI   |
