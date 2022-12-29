@@ -19,7 +19,7 @@ MPU6050 mpu;
 char cdata[MAX_LENGTH];
 unsigned long timer = 0;
 bool blinkState = false;
-bool isPulled = false;
+volatile bool isPulled = false;
 float hum, temp;
 char hum_c[7], temp_c[7], acc0_c[7], acc1_c[7], acc2_c[7];
 
@@ -104,19 +104,22 @@ void dht_setup()
 
 void sendMessage()
 {
-  // delay(200);
-
   isPulled = true;
+  delay(10);
   // pinMode(SCL, INPUT);
-  char cdata[globalData.length() + 1];
-  globalData.toCharArray(cdata, globalData.length() + 1);
+
+  // on request send message
+  Wire.write("TEST ");
+  for (int i = 0; i < MAX_LENGTH; i++)
+  {
+    Wire.write(cdata[i]); // send message to master
+  }
   Serial.print(F("Data is: "));
   Serial.println(cdata);
-  // on request send message
-  Wire.write(cdata); // send message to master
-  // delay(200);
-  // pinMode(SCL, OUTPUT);
+
   isPulled = false;
+  delay(10);
+  // pinMode(SCL, OUTPUT);
 }
 
 void setup()
@@ -124,7 +127,7 @@ void setup()
   Serial.begin(115200);
 
   Wire.begin(SLAVE_ADDRESS);
-  Wire.setClock(400000); // 400kHz I2C clock. Comment this line if having compilation difficulties
+  // Wire.setClock(400000); // 400kHz I2C clock. Comment this line if having compilation difficulties
   Serial.println("Begin setup");
   dht_setup();
   Serial.println(F("Done dht setting."));
@@ -150,8 +153,8 @@ void loop()
     dtostrf(normAccel.YAxis, 2, 2, acc1_c);
     dtostrf(normAccel.ZAxis, 2, 2, acc2_c);
     // sprintf(cdata, "|h=%s|t=%s|x=%s,y=%s,z=%s|", chum, ctemp, cacc0, cacc1, cacc2);
-    snprintf(cdata, 50, "|h=%s|t=%s|x=%s,y=%s,z=%s|", hum_c, temp_c, acc0_c, acc1_c, acc2_c);
-    Serial.println(cdata);
+    snprintf(cdata, MAX_LENGTH, "|h=%s|t=%s|x=%s,y=%s,z=%s|", hum_c, temp_c, acc0_c, acc1_c, acc2_c);
+    // Serial.println(cdata);
 
     // blinks to indicate program is running
     blinkState = !blinkState;
