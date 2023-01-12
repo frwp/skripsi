@@ -141,7 +141,7 @@ void loop()
         dtostrf(yAccel, 2, 2, acc1_c);
         dtostrf(zAccel, 2, 2, acc2_c);
         // Data is humidity | temperature | acceleration [x, y, z]
-        snprintf(cdata, MAX_LENGTH, "%s|%s|[%s,%s,%s]", hum_c, temp_c, acc0_c, acc1_c, acc2_c);
+        snprintf(cdata, MAX_LENGTH, "%s|%s|%s,%s,%s", hum_c, temp_c, acc0_c, acc1_c, acc2_c);
         // Serial.println(cdata);
 
         // blinks to indicate program is running
