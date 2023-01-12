@@ -32,7 +32,7 @@ int main(void)
     puts("I2C test");
 
     const int SLAVE_ADDRESS = 0x04;
-    const int MESSAGE_LENGTH = 5;
+    const int MESSAGE_LENGTH = 32;
 
     // Initiate wiringPi
     int errno = wiringPiSetup();

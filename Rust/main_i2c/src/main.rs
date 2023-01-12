@@ -26,7 +26,7 @@ use std::{str, thread, time};
 use rppal::i2c::I2c;
 
 const SLAVE_ADDRESS: u16 = 0x04;
-const MESSAGE_LENGTH: usize = 5;
+const MESSAGE_LENGTH: usize = 32;
 
 fn main() -> Result<(), Box<dyn Error>> {
     let mut i2c = I2c::new()?;

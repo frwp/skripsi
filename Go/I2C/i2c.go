@@ -11,7 +11,7 @@ import (
 	"periph.io/x/host/v3"
 )
 
-const MESSAGE_LENGTH = 5
+const MESSAGE_LENGTH = 32
 const SLAVE_ADDRESS = 0x04
 
 func main() {
