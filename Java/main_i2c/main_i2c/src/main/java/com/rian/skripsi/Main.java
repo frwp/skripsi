@@ -7,19 +7,21 @@ package com.rian.skripsi;
 
 import com.pi4j.Pi4J;
 import com.pi4j.context.Context;
-import com.pi4j.io.gpio.digital.DigitalOutput;
-import com.pi4j.io.gpio.digital.DigitalState;
+import com.pi4j.io.i2c.I2C;
+import com.pi4j.io.i2c.I2CConfig;
+import com.pi4j.io.i2c.I2CProvider;
 import com.pi4j.platform.Platforms;
 import com.pi4j.util.Console;
 import java.lang.reflect.InvocationTargetException;
+import java.time.Duration;
+import java.time.Instant;
 
 /**
  *
- * @author luca
+ * @author Rian Wardana
  */
 public class Main {
 
-    private static final int PIN_LED = 22; // PIN 15 = BCM 22
     private static final Console console = new Console();
 
     /**
@@ -51,26 +53,32 @@ public class Main {
         platforms.describe().print(System.out);
         console.println();
 
-        var ledConfig = DigitalOutput.newConfigBuilder(pi4j)
-                        .id("led")
-                        .name("LED Flasher")
-                        .address(PIN_LED)
-                        .shutdown(DigitalState.LOW)
-                        .initial(DigitalState.LOW)
-                        .provider("pigpio-digital-output");
+        I2CProvider i2cProvider = pi4j.provider("linuxfs-i2c");
+        I2CConfig i2cConfig = I2C.newConfigBuilder(pi4j)
+                .id("NANO")
+                .bus(1)
+                .device(0x04)
+                .build();
 
-        var led = pi4j.create(ledConfig);
-        int counter = 0;
-        while (counter < 50) {
-            if (led.equals(DigitalState.HIGH)) {
-                led.low();
-                System.out.println("low");
-            } else {
-                led.high();
-                System.out.println("high");
+        try (I2C arduinoI2c = i2cProvider.create(i2cConfig)) {
+            console.box("I2C BUS");
+            console.println();
+            console.println("I2C BUS: " + arduinoI2c.bus());
+            console.println("I2C DEVICE: " + arduinoI2c.device());
+            console.println("I2C PROVIDER: " + arduinoI2c.provider().name());
+            console.println("I2C ID: " + arduinoI2c.id());
+            console.println();
+
+            console.box("I2C READ/WRITE");
+            while (true) {
+                Instant start = Instant.now();
+                String str = new String(arduinoI2c.readNBytes(32), "UTF-8");
+                Instant end = Instant.now();
+                Duration elapsed = Duration.between(start, end);
+                console.println(str);
+                console.println("Takes " + String.valueOf(elapsed.toMillis()) + " ms");
+                Thread.sleep(2000 - elapsed.toMillis());
             }
-            Thread.sleep(500);
-            counter++;
         }
     }
 

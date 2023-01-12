@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.rian.skripsi</groupId>
     <artifactId>main_i2c</artifactId>
@@ -13,7 +14,7 @@
         <url></url>
     </organization>
     -->
-    
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>11</maven.compiler.source>
@@ -58,8 +59,13 @@
             <artifactId>pi4j-plugin-pigpio</artifactId>
             <version>${pi4j.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.pi4j</groupId>
+            <artifactId>pi4j-plugin-linuxfs</artifactId>
+            <version>${pi4j.version}</version>
+        </dependency>
     </dependencies>
-        
+
     <build>
         <finalName>${project.artifactId}</finalName>
         <plugins>
@@ -157,9 +163,9 @@
                         <phase>clean</phase>
                         <configuration>
                             <target>
-                                <property name="local.dist.dir" value="${project.build.directory}" />        
+                                <property name="local.dist.dir" value="${project.build.directory}" />
                                 <property name="remote.runtime.encoding" value="UTF-8" />
-                                <property name="dist.jar.name" value="${project.build.finalName}" />        
+                                <property name="dist.jar.name" value="${project.build.finalName}" />
                                 <ant antfile="antrun/build.xml" target="clean-remote" />
                             </target>
                         </configuration>
@@ -172,9 +178,9 @@
                         <phase>install</phase>
                         <configuration>
                             <target>
-                                <property name="local.dist.dir" value="${project.build.directory}" />        
+                                <property name="local.dist.dir" value="${project.build.directory}" />
                                 <property name="remote.runtime.encoding" value="UTF-8" />
-                                <property name="dist.jar.name" value="${project.build.finalName}" />        
+                                <property name="dist.jar.name" value="${project.build.finalName}" />
                                 <ant antfile="antrun/build.xml" target="build-remote" />
                             </target>
                         </configuration>
@@ -188,9 +194,9 @@
                             <target>
                                 <property name="remote.run.jvmargs" value="${jvmargs.run}" />
                                 <property name="target.run.as.module" value="${run.with.java.module}" />
-                                <property name="local.dist.dir" value="${project.build.directory}" />        
+                                <property name="local.dist.dir" value="${project.build.directory}" />
                                 <property name="remote.runtime.encoding" value="UTF-8" />
-                                <property name="dist.jar.name" value="${project.build.finalName}" />        
+                                <property name="dist.jar.name" value="${project.build.finalName}" />
                                 <ant antfile="antrun/build.xml" target="run-remote" />
                             </target>
                         </configuration>
@@ -204,9 +210,9 @@
                             <target>
                                 <property name="remote.debug.jvmargs" value="${jvmargs.debug}" />
                                 <property name="target.run.as.module" value="${run.with.java.module}" />
-                                <property name="local.dist.dir" value="${project.build.directory}" />        
+                                <property name="local.dist.dir" value="${project.build.directory}" />
                                 <property name="remote.runtime.encoding" value="UTF-8" />
-                                <property name="dist.jar.name" value="${project.build.finalName}" />        
+                                <property name="dist.jar.name" value="${project.build.finalName}" />
                                 <ant antfile="antrun/build.xml" target="debug-remote" />
                             </target>
                         </configuration>
@@ -227,6 +233,24 @@
                         <version>1.10.8</version>
                     </dependency>
                 </dependencies>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.2.0</version>
+                <configuration>
+                    <transformers>
+                        <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+                    </transformers>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
