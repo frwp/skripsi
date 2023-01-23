@@ -2,7 +2,10 @@ package main
 
 import (
 	"fmt"
+	"io"
 	"log"
+	"net/http"
+	"net/url"
 	"time"
 
 	"periph.io/x/conn/v3/physic"
@@ -53,7 +56,43 @@ func main() {
 
 		// calculate elapsed time
 		elapsed := time.Since(start_time)
-		fmt.Printf("%v\n", string(read[:]))
+
+		// add timestamp to data
+		data := fmt.Sprintf("%v\n", string(read[:]))
+		data = fmt.Sprint(time.Now().Unix()) + "|" + data
+		fmt.Printf("%v\n", data)
+
+		// envelope the data in post form
+		formData := url.Values{
+			"data": {data},
+			"node": {"node1"},
+		}
+
+		// run in goroutine to not block the loop
+		go sendData("http://192.168.8.134:8080/api", formData)
+
 		time.Sleep(time.Second*2 - elapsed)
 	}
+}
+
+// sendData takes a url and data and sends a post request to the url with the data
+func sendData(url string, data url.Values) {
+	// Create a new post request to the url with the data
+	resp, err := http.PostForm(url, data)
+	// If there was an error, panic
+	if err != nil {
+		log.Panic(err)
+	}
+
+	// Close the response body when the function returns
+	defer resp.Body.Close()
+
+	// Read the response body
+	body, err := io.ReadAll(resp.Body)
+	// If there was an error, panic
+	if err != nil {
+		log.Panic(err)
+	}
+	// Print the response body to the console
+	log.Println(string(body))
 }
