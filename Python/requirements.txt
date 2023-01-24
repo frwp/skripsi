@@ -1,0 +1,15 @@
+aiodns
+aiohttp
+aiosignal
+async-timeout
+attrs
+cffi
+charset-normalizer
+frozenlist
+idna
+multidict
+pycares
+pycparser
+smbus2
+spidev
+yarl
