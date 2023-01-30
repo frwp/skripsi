@@ -17,6 +17,8 @@ use std::{error::Error, str, thread, time};
 
 use rppal::spi::{Bus, Mode, SlaveSelect, Spi};
 
+use reqwest;
+
 const MESSAGE_LENGTH: usize = 58;
 
 fn main() -> Result<(), Box<dyn Error>> {
@@ -26,7 +28,10 @@ fn main() -> Result<(), Box<dyn Error>> {
     let mut read_buffer: [u8; MESSAGE_LENGTH] = [0u8; MESSAGE_LENGTH];
     let mut write_buffer: [u8; MESSAGE_LENGTH] = [0u8; MESSAGE_LENGTH];
 
-    loop {
+    let client = reqwest::Client::new();
+    let mut counter = 0;
+
+    while counter < 3 {
         write_buffer[0] = 0x10;
 
         let time_start = time::Instant::now();
@@ -36,11 +41,26 @@ fn main() -> Result<(), Box<dyn Error>> {
         let elapsed = time_start.elapsed();
 
         let payload = str::from_utf8(&read_buffer).unwrap();
+
+        let timestamp: u64 = time::SystemTime::now().
+                duration_since(time::UNIX_EPOCH).
+                unwrap().
+                as_secs();
+
+        let mut data: String = timestamp.to_string();
+        data = data + "|" + payload;
+
+        let post_form = [("node", "node1"), ("data", &data)];
+
         println!("{payload}");
+
+        client.post("http://34.28.200.114/api").
+                form(&post_form).
+                send();
 
         let total_wait = time::Duration::from_secs(2) - elapsed;
 
         thread::sleep(total_wait);
     }
-    // Ok(())
+    Ok(())
 }
