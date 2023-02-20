@@ -37,8 +37,10 @@ func main() {
 		log.Fatal(err)
 	}
 
+	counter := 0
+
 	// forever loop
-	for {
+	for counter < 1905 {
 		// start counting time
 		start_time := time.Now()
 
@@ -69,7 +71,8 @@ func main() {
 		}
 
 		// run in goroutine to not block the loop
-		go sendData("http://192.168.8.134:8080/api", formData)
+		go sendData("http://34.28.200.114/api", formData)
+		counter += 1
 
 		time.Sleep(time.Second*2 - elapsed)
 	}
