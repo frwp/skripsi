@@ -3,7 +3,7 @@
 #define MOSI PIN_SPI_MOSI
 #define MISO PIN_SPI_MISO
 #define SCLK PIN_SPI_SCK
-#define LED PIN_A7
+#define LED PIN_A1
 
 /**
  * Quick reference
@@ -28,7 +28,7 @@ bool blinkState = false;
 
 void setup() {
   // setup serial communication for debug
-  Serial.begin(9600);
+  Serial.begin(115200);
 
   // unlike in master mode when we could just call
   // SPI.beginTransaction() ,
@@ -41,6 +41,7 @@ void setup() {
   pinMode(MOSI, INPUT);
   pinMode(SCLK, INPUT);
   pinMode(SS, INPUT);
+  pinMode(LED, OUTPUT);
 
   pos = 0;
   processed = false;

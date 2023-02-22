@@ -10,7 +10,7 @@
  * |  7   |   6   |   5   |   4   |   3   |   2   |   1   |   0   |
  *
  * SPIE = enables SPI interrupt when 1
- * SPE  = enables SPE when 1
+ * SPE  = (SPI Enable) enables SPI when 1
  * DORD = Sends data least Significant Bit First when 1, most Significant Bit first when 0
  * MSTR = Sets the Arduino in controller mode when 1, peripheral mode when 0
  * CPOL = Sets the data clock to be idle when high if set to 1, idle when low if set to 0
@@ -76,14 +76,12 @@ float readX()
     long xScaled = map(xRaw, RawMin, RawMax, -3000, 3000);
     return xScaled / 1000.0;
 }
-
 float readY()
 {
     int yRaw = readAxis(yInput) + yOffset;
     long yScaled = map(yRaw, RawMin, RawMax, -3000, 3000);
     return yScaled / 1000.0;
 }
-
 float readZ()
 {
     int zRaw = readAxis(zInput) + zOffset;
@@ -180,9 +178,7 @@ void loop()
         hum = dht.readHumidity();
         temp = dht.readTemperature();
 
-        float xAccel = readX();
-        float yAccel = readY();
-        float zAccel = readZ();
+        float xAccel = readX(); float yAccel = readY();  float zAccel = readZ();
 
         dtostrf(hum, 2, 1, hum_c);
         dtostrf(temp, 2, 1, temp_c);
@@ -190,8 +186,8 @@ void loop()
         dtostrf(yAccel, 2, 2, acc1_c);
         dtostrf(zAccel, 2, 2, acc2_c);
         // Data is humidity | temperature | acceleration [x, y, z]
-        snprintf(cdata, MAX_LENGTH, "%s|%s|[%s,%s,%s]", hum_c, temp_c, acc0_c, acc1_c, acc2_c);
-        // Serial.println(cdata);
+        snprintf(cdata, MAX_LENGTH, "%s|%s|%s,%s,%s", hum_c, temp_c, acc0_c, acc1_c, acc2_c);
+        Serial.println(cdata);
 
         // blinks to indicate program is running
         blinkState = !blinkState;

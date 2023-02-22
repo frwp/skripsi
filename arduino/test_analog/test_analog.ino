@@ -4,7 +4,7 @@
 
 #define LED_PIN PIN_A1
 #define DHTPIN PIN7
-#define DHTTYPE DHT22
+#define DHTTYPE DHT11
 #define SLAVE_ADDRESS 0x04
 #define MAX_LENGTH 32
 #define xInput PIN_A2
@@ -23,7 +23,7 @@ char cdata[MAX_LENGTH];
 unsigned long timer = 0;
 bool blinkState = false;
 volatile bool isPulled = false;
-float hum, temp;
+float hum, temp, xAccel, yAccel, zAccel;
 char hum_c[7], temp_c[7], acc0_c[7], acc1_c[7], acc2_c[7];
 int xOffset = 0, yOffset = 0, zOffset = 0;
 
@@ -89,7 +89,7 @@ void calibrate_gy61()
     Serial.println(zOffset);
 }
 
-void sendMessage()
+void sendData()
 {
     isPulled = true;
     delay(10);
@@ -119,8 +119,7 @@ void setup()
     delay(1000);
     Serial.println(F("Done calibrating."));
 
-    Wire.onRequest(sendMessage);
-    // pinMode(SCL, INPUT);
+    Wire.onRequest(sendData);
     pinMode(LED_PIN, OUTPUT);
 }
 
@@ -128,21 +127,18 @@ void loop()
 {
     if (!isPulled && (millis() - timer > 500)) // loop every half sec
     {
-        hum = dht.readHumidity();
-        temp = dht.readTemperature();
-
-        float xAccel = readX();
-        float yAccel = readY();
-        float zAccel = readZ();
+        hum = dht.readHumidity();   temp = dht.readTemperature();
+        xAccel = readX();   yAccel = readY();  zAccel = readZ();
 
         dtostrf(hum, 2, 1, hum_c);
         dtostrf(temp, 2, 1, temp_c);
         dtostrf(xAccel, 2, 2, acc0_c);
         dtostrf(yAccel, 2, 2, acc1_c);
         dtostrf(zAccel, 2, 2, acc2_c);
+
         // Data is humidity | temperature | acceleration [x, y, z]
         snprintf(cdata, MAX_LENGTH, "%s|%s|%s,%s,%s", hum_c, temp_c, acc0_c, acc1_c, acc2_c);
-        // Serial.println(cdata);
+        Serial.println(cdata);
 
         // blinks to indicate program is running
         blinkState = !blinkState;
