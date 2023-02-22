@@ -13,15 +13,14 @@
  * > ./build.sh
  *******************************************************************************/
 
-use std::{error::Error, str, thread, time};
-
-use rppal::spi::{Bus, Mode, SlaveSelect, Spi};
-
 use reqwest;
+use rppal::spi::{Bus, Mode, SlaveSelect, Spi};
+use std::{error::Error, str, thread, time};
 
 const MESSAGE_LENGTH: usize = 58;
 
-fn main() -> Result<(), Box<dyn Error>> {
+#[tokio::main]
+async fn main() -> Result<(), Box<dyn Error>> {
     // Configure SPI slave
     let spi = Spi::new(Bus::Spi0, SlaveSelect::Ss0, 400_000, Mode::Mode0)?;
 
@@ -31,7 +30,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     let client = reqwest::Client::new();
     let mut counter = 0;
 
-    while counter < 3 {
+    while counter < 1805 {
         write_buffer[0] = 0x10;
 
         let time_start = time::Instant::now();
@@ -42,23 +41,25 @@ fn main() -> Result<(), Box<dyn Error>> {
 
         let payload = str::from_utf8(&read_buffer).unwrap();
 
-        let timestamp: u64 = time::SystemTime::now().
-                duration_since(time::UNIX_EPOCH).
-                unwrap().
-                as_secs();
+        let timestamp: u64 = time::SystemTime::now()
+            .duration_since(time::UNIX_EPOCH)
+            .unwrap()
+            .as_secs();
 
         let mut data: String = timestamp.to_string();
         data = data + "|" + payload;
 
         let post_form = [("node", "node1"), ("data", &data)];
 
-        println!("{payload}");
+        println!("{data}");
 
-        client.post("http://34.28.200.114/api").
-                form(&post_form).
-                send();
+        client
+            .post("http://34.28.200.114/api")
+            .form(&post_form)
+            .send().await;
 
         let total_wait = time::Duration::from_secs(2) - elapsed;
+        counter += 1;
 
         thread::sleep(total_wait);
     }

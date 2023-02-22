@@ -23,9 +23,16 @@
 # still uses Docker underneath, follow instruction on installing cross on the docs
 cross build --release --target armv7-unknown-linux-gnueabihf
 
+if [[ $? -ne 0 ]]; then
+    echo "Compile failed."
+    exit 1
+else
+    echo "Compile done."
+fi
+
 host1="pi@192.168.8.141"
 host2="pi@192.168.4.2"
-host3="pi@10.6.164.67"
+host3="pi@10.6.174.146"
 check_connection="ssh -o ConnectTimeout=1 -q"
 
 echo "Checking connection..."
