@@ -11,11 +11,13 @@ public class Main_Spi
 
         // instantiate stopwatch object, for measuring delays
         Stopwatch timer = new Stopwatch();
+        Stopwatch timer2 = new Stopwatch();
         var interval = TimeSpan.FromSeconds(2);
 
         try
         {
-            while (true)
+            timer2.Start();
+            while (TimeSpan.FromHours(1) > timer2.Elapsed)
             {
                 timer.Start();
 
@@ -26,6 +28,8 @@ public class Main_Spi
                 Thread.Sleep(interval - timer.Elapsed);
                 timer.Reset();
             }
+            timer.Stop();
+            timer2.Stop();
         }
         finally
         {
@@ -39,6 +43,7 @@ class ReaderWriter
     private int messageLength;
     private SpiConnectionSettings spiSettings;
     private SpiDevice spidev;
+    private HttpClient client = new HttpClient();
 
     // Constructor
     // @params int messageLength
@@ -56,20 +61,45 @@ class ReaderWriter
         spidev = SpiDevice.Create(spiSettings);
     }
 
-    public void Tx()
+    public async void Tx()
     {
-        // allocate memrory for buffer, read and write, which both needs to be the same size
-        Span<byte> read = new byte[messageLength];
-        Span<byte> write = new byte[messageLength];
-        write[0] = 0x10;
+        string transfer()
+        {
+            // allocate memrory for buffer, read and write, which both needs to be the same size
+            Span<byte> read = new byte[messageLength];
+            Span<byte> write = new byte[messageLength];
+            write[0] = 0x10;
 
-        // begin transaction
-        spidev.TransferFullDuplex(write, read);
+            // begin transaction
+            spidev.TransferFullDuplex(write, read);
 
-        // convert bytes to string and print them
-        Console.WriteLine(Encoding.ASCII.GetString(read.ToArray()));
-        write.Clear();
-        read.Clear();
+            // convert bytes to string and return them
+            return Encoding.ASCII.GetString(read.ToArray());
+        }
+
+        var data = transfer();
+        var timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString();
+        data = timestamp + "|" + data;
+        Console.WriteLine(data);
+
+        Dictionary<string, string> postData = new Dictionary<string, string>();
+
+        postData.Add("node", "node1");
+        postData.Add("data", data);
+
+        FormUrlEncodedContent payload = new FormUrlEncodedContent(postData);
+
+        await PostAsync(client, "http://34.28.200.114/api", payload);
+
+    }
+
+    private async Task PostAsync(HttpClient httpClient, string url, FormUrlEncodedContent payload)
+    {
+        HttpResponseMessage response = await httpClient.PostAsync(url, payload);
+        if (!response.IsSuccessStatusCode)
+        {
+            Console.WriteLine(response.ToString());
+        }
     }
 
     public void Dispose()
