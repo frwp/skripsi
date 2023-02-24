@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "spi": "node src/spi",
-    "i2c": "node src/i2c"
+    "spi": "sudo $(which node) src/spi",
+    "i2c": "sudo $(which node) src/i2c"
   },
   "author": "",
   "license": "ISC",

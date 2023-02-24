@@ -11,9 +11,9 @@ var options = {
 rpio.init(options);
 rpio.spiBegin();
 rpio.spiChipSelect(0);
-rpio.spiSetClockDivider(625);
+rpio.spiSetClockDivider(624);
 
-setInterval(() => {
+let myInterval = setInterval(() => {
     try {
         var writeBuf = Buffer.alloc(58, 0x00);
         var readBuf = Buffer.alloc(writeBuf.length);
@@ -23,25 +23,30 @@ setInterval(() => {
         let timeStamp = Math.floor(Date.now() / 1000);
         data = timeStamp + "|" + data;
 
-        let formData = {
+        let formData = new URLSearchParams({
             data: data,
             node: "node1",
-        };
+        });
 
         console.info(formData);
 
         axios
-            .post("http://192.168.8.134:8080/api", formData)
+            .post("http://34.28.200.114/api", formData)
             .then((res) => {
-                console.info(res);
+                console.log(res.status);
             })
             .catch((err) => {
-                console.error(err);
+                console.error(err.data);
             });
     } catch (error) {
         console.error(error);
-    } finally {
         rpio.spiEnd();
         rpio.close();
     }
 }, 2000);
+
+
+// run until 1 hour + 5 seconds (3605 seconds * 1000 ms)
+setTimeout(() => {
+    clearInterval(myInterval);
+}, 3605000);
