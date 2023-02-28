@@ -2,7 +2,7 @@
 
 host1="pi@192.168.8.141"
 host2="pi@192.168.4.2"
-host3="pi@10.6.178.201"
+host3="pi@10.6.185.207"
 check_connection="ssh -o ConnectTimeout=1 -q"
 
 echo "Checking connection..."
@@ -26,7 +26,7 @@ echo "Transfer to Raspberry Pi..."
 
 if command -v rsync &> /dev/null
 then
-    rsync -P --rsh=ssh $(pwd)/{spi.py,i2c.py,requirements.txt} ${working_host}:~/skripsi/Python/
+    rsync -P --rsh=ssh $(pwd)/{spi.py,i2c.py,requirements.txt,run.sh} ${working_host}:~/skripsi/Python/
 else
     scp $(pwd)/{spi.py,i2c.py,requirements.txt} ${working_host}:~/skripsi/Python/
 fi
