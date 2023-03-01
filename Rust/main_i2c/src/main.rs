@@ -20,34 +20,69 @@
  * > ./build.sh
  *******************************************************************************/
 
-use std::error::Error;
-use std::{str, thread, time};
-
+use reqwest;
 use rppal::i2c::I2c;
+use std::{error::Error, str, thread, time};
 
 const SLAVE_ADDRESS: u16 = 0x04;
 const MESSAGE_LENGTH: usize = 32;
 
-fn main() -> Result<(), Box<dyn Error>> {
+#[tokio::main]
+async fn main() -> Result<(), Box<dyn Error>> {
     let mut i2c = I2c::new()?;
     let mut buffer: [u8; MESSAGE_LENGTH] = [0u8; MESSAGE_LENGTH];
 
     // Set the address of the slave
     i2c.set_slave_address(SLAVE_ADDRESS)?;
+    let client = reqwest::Client::new();
 
-    loop {
+    let timer = time::Instant::now();
 
+    while timer.elapsed() <= time::Duration::from_secs(3605) {
         // get current time for measuring elapsed time during i2c read
         let time_start = time::Instant::now();
 
         i2c.read(&mut buffer)?;
 
+        // let payload = str::from_utf8(&buffer).unwrap();
+        let payload = match str::from_utf8(&buffer) {
+            Ok(text) => text,
+            Err(error) => {
+                println!("Error parsing text {:?}", error);
+                "error"
+            }
+        };
+        if payload.len() < 21 {
+            continue;
+        }
+
+        let timestamp: u64 = time::SystemTime::now()
+            .duration_since(time::UNIX_EPOCH)
+            .unwrap()
+            .as_secs();
+
+        let mut data: String = timestamp.to_string();
+        data = data + "|" + payload;
+
+        let post_form = [("node", "node1"), ("data", &data)];
+
+        println!("{data}");
+
+        let res = client
+            .post("http://34.28.200.114/api")
+            .form(&post_form)
+            .send()
+            .await;
+
+        if let Err(error) = res {
+            println!("Error sending message {:?}", error)
+        }
+
         let elapsed = time_start.elapsed();
-        assert!(elapsed <= time::Duration::from_secs(2));
 
-        let payload = str::from_utf8(&buffer).unwrap();
-        println!("{payload}");
-
+        if elapsed >= time::Duration::from_secs(2) {
+            continue;
+        }
         let total_wait = time::Duration::from_secs(2) - elapsed;
 
         thread::sleep(total_wait);

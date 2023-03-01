@@ -37,8 +37,6 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
         spi.transfer(&mut read_buffer, &mut write_buffer)?;
 
-        let elapsed = time_start.elapsed();
-
         let payload = str::from_utf8(&read_buffer).unwrap();
 
         let timestamp: u64 = time::SystemTime::now()
@@ -57,6 +55,8 @@ async fn main() -> Result<(), Box<dyn Error>> {
             .post("http://34.28.200.114/api")
             .form(&post_form)
             .send().await;
+        
+        let elapsed = time_start.elapsed();
 
         let total_wait = time::Duration::from_secs(2) - elapsed;
         counter += 1;
