@@ -4,7 +4,7 @@
 
 #define LED_PIN PIN_A1
 #define DHTPIN PIN7
-#define DHTTYPE DHT11
+#define DHTTYPE DHT22
 #define SLAVE_ADDRESS 0x04
 #define MAX_LENGTH 32
 #define xInput PIN_A2

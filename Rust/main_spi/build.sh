@@ -30,9 +30,9 @@ else
     echo "Compile done."
 fi
 
-host1="pi@192.168.8.141"
+host1="pi@192.168.8.179"
 host2="pi@192.168.4.2"
-host3="pi@10.6.174.146"
+host3="pi@10.6.181.244"
 check_connection="ssh -o ConnectTimeout=1 -q"
 
 echo "Checking connection..."

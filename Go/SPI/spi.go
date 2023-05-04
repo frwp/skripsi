@@ -14,7 +14,7 @@ import (
 	"periph.io/x/host/v3"
 )
 
-const MESSAGE_LENGTH = 58
+const MESSAGE_LENGTH = 32
 
 func main() {
 
@@ -32,7 +32,8 @@ func main() {
 
 	// From periph.io: the actual speed is lower than stated here,
 	// 600 kHz here => 375 kHz actual speed, which is closer to 400 kHz target
-	conn, err := port.Connect(physic.KiloHertz*600, spi.Mode0, 8)
+	conn, err := port.Connect(physic.MegaHertz, spi.Mode0, 8)
+	// conn, err := port.Connect(physic.KiloHertz*600, spi.Mode0, 8)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -61,6 +62,9 @@ func main() {
 
 		// add timestamp to data
 		data := fmt.Sprintf("%v\n", string(read[:]))
+		fmt.Println(read)
+		fmt.Println(data)
+		fmt.Printf("%v\n", string(write[:]))
 		data = fmt.Sprint(time.Now().Unix()) + "|" + data
 		fmt.Printf("%v\n", data)
 
@@ -71,7 +75,7 @@ func main() {
 		}
 
 		// run in goroutine to not block the loop
-		go sendData("http://34.28.200.114/api", formData)
+		go sendData("http://192.168.8.185/api", formData)
 		counter += 1
 
 		time.Sleep(time.Second*2 - elapsed)

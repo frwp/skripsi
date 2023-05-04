@@ -12,9 +12,13 @@ import com.pi4j.io.i2c.I2CConfig;
 import com.pi4j.io.i2c.I2CProvider;
 import com.pi4j.platform.Platforms;
 import com.pi4j.util.Console;
+
+import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.time.Duration;
 import java.time.Instant;
+import java.net.URL;
+import java.net.HttpURLConnection;
 
 /**
  *
@@ -48,6 +52,8 @@ public class Main {
     private void run(Context pi4j) throws Exception {
         Platforms platforms = pi4j.platforms();
 
+        URL url = new URL("http://192.168.8.185/api");
+
         console.box("Pi4J PLATFORMS");
         console.println();
         platforms.describe().print(System.out);
@@ -61,25 +67,34 @@ public class Main {
                 .build();
 
         try (I2C arduinoI2c = i2cProvider.create(i2cConfig)) {
-            console.box("I2C BUS");
-            console.println();
-            console.println("I2C BUS: " + arduinoI2c.bus());
-            console.println("I2C DEVICE: " + arduinoI2c.device());
-            console.println("I2C PROVIDER: " + arduinoI2c.provider().name());
-            console.println("I2C ID: " + arduinoI2c.id());
-            console.println();
+            console.clearScreen();
 
             console.box("I2C READ/WRITE");
             while (true) {
+                HttpURLConnection con = (HttpURLConnection) url.openConnection();
+                con.setRequestMethod("POST");
+                con.setDoOutput(true);
+
                 Instant start = Instant.now();
                 String str = new String(arduinoI2c.readNBytes(32), "UTF-8");
+                str = String.valueOf(Instant.now().getEpochSecond()) + "|" + str;
+                console.println(str);
+                String payload = "node=node1&data=" + str;
+
+                OutputStream os = con.getOutputStream();
+                os.write(payload.getBytes());
+                os.flush();
+                os.close();
+                int responseCode = con.getResponseCode();
                 Instant end = Instant.now();
                 Duration elapsed = Duration.between(start, end);
-                console.println(str);
-                console.println("Takes " + String.valueOf(elapsed.toMillis()) + " ms");
+                console.println("Takes " + String.valueOf(elapsed.toMillis()) + " ms returning "
+                        + String.valueOf(responseCode));
+                if (elapsed.compareTo(Duration.ofSeconds(2)) > 0) {
+                    continue;
+                }
                 Thread.sleep(2000 - elapsed.toMillis());
             }
         }
     }
-
 }

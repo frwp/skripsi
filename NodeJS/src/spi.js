@@ -31,7 +31,7 @@ let myInterval = setInterval(() => {
         console.info(formData);
 
         axios
-            .post("http://34.28.200.114/api", formData)
+            .post("http://192.168.8.183/api", formData)
             .then((res) => {
                 console.log(res.status);
             })

@@ -15,7 +15,7 @@ async def send_requests(client: httpx.AsyncClient, url: str, payload):
 def main():
     timer = time.time()
     try:
-        client = httpx.AsyncClient(base_url='http://34.28.200.114')
+        client = httpx.AsyncClient(base_url='http://192.168.8.185')
         while time.time() - timer < 3600:
             start = time.time_ns()
             try:

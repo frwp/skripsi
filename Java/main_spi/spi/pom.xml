@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.rian</groupId>
     <artifactId>spi</artifactId>
-    <version>1.0.0</version>
+    <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>Raspi Project</name>
 
@@ -24,8 +24,8 @@
         <jvmargs.run></jvmargs.run>
         <jvmargs.debug></jvmargs.debug>
 
-        <slf4j.version>1.7.32</slf4j.version>
-        <pi4j.version>2.1.0</pi4j.version>
+        <slf4j.version>2.0.0</slf4j.version>
+        <pi4j.version>2.2.1</pi4j.version>
     </properties>
 
     <dependencies>
@@ -227,6 +227,24 @@
                         <version>1.10.8</version>
                     </dependency>
                 </dependencies>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.2.0</version>
+                <configuration>
+                    <transformers>
+                        <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+                    </transformers>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

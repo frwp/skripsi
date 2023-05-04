@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 echo "Building package..."
 env GOARCH=arm GOARM=7 GOOS=linux go build -ldflags "-s -w" -a -o main_spi spi.go
@@ -6,9 +6,9 @@ mkdir -p target
 mv main_spi target/main_spi
 echo "Building done."
 
-host1="pi@192.168.8.141"
+host1="pi@192.168.8.179"
 host2="pi@192.168.4.2"
-host3="pi@10.6.174.146"
+host3="pi@10.6.181.244"
 check_connection="ssh -o ConnectTimeout=1 -q"
 
 echo "Checking connection..."

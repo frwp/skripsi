@@ -71,7 +71,7 @@ int main(void)
     puts("Starting I2C transfer.");
     timespec_get(&program_start, TIME_UTC);
 
-    while (stop.tv_sec - program_start.tv_sec < 5)
+    while (stop.tv_sec - program_start.tv_sec < 3605)
     {
         timespec_get(&start, TIME_UTC);
 
@@ -89,7 +89,7 @@ int main(void)
         // where time is in long int size which is 32 byte (2^32) and that number
         // in decimal is 10 char long. For char to be string, it needs to be
         // "NULL terminated", we end up with 11 byte long. 12 is a safe margin.
-        total_length = strlen(data) + 12;
+        total_length = strlen(buf) + 12;
         payload = (char *)malloc(total_length);
 
         // convert time to time_str
@@ -119,7 +119,7 @@ int main(void)
 
             // set options used by curl
             // curl_easy_setopt(curl, CURLOPT_URL, "http://10.6.156.157/api");
-            curl_easy_setopt(curl, CURLOPT_URL, "http://34.28.200.114/api");
+            curl_easy_setopt(curl, CURLOPT_URL, "http://192.168.8.185/api");
             curl_easy_setopt(curl, CURLOPT_MIMEPOST, mime);
 
             res = curl_easy_perform(curl);

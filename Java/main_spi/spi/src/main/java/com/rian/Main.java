@@ -7,19 +7,26 @@ package com.rian;
 
 import com.pi4j.Pi4J;
 import com.pi4j.context.Context;
-import com.pi4j.io.gpio.digital.DigitalOutput;
-import com.pi4j.io.gpio.digital.DigitalState;
+import com.pi4j.io.spi.Spi;
+import com.pi4j.io.spi.SpiBus;
+import com.pi4j.io.spi.SpiConfig;
+import com.pi4j.io.spi.SpiMode;
+import com.pi4j.plugin.pigpio.provider.spi.*;
+import com.pi4j.library.pigpio.PiGpio;
 import com.pi4j.platform.Platforms;
 import com.pi4j.util.Console;
 import java.lang.reflect.InvocationTargetException;
+import java.time.Duration;
+import java.time.Instant;
+import java.util.Arrays;
+import java.nio.*;
 
 /**
  *
- * @author luca
+ * @author Rian Wardana
  */
 public class Main {
 
-    private static final int PIN_LED = 22; // PIN 15 = BCM 22
     private static final Console console = new Console();
 
     /**
@@ -29,7 +36,11 @@ public class Main {
         console.box("Hello Rasbian world !");
         Context pi4j = null;
         try {
-            pi4j = Pi4J.newAutoContext();
+            var piGpio = PiGpio.newNativeInstance();
+            pi4j = Pi4J.newContextBuilder()
+                    .noAutoDetect()
+                    .add(PiGpioSpiProvider.newInstance(piGpio))
+                    .build();
             new Main().run(pi4j);
         } catch (InvocationTargetException e) {
             console.println("Error: " + e.getTargetException().getMessage());
@@ -46,32 +57,51 @@ public class Main {
     private void run(Context pi4j) throws Exception {
         Platforms platforms = pi4j.platforms();
 
-        console.box("Pi4J PLATFORMS");
+        console.box("Pi4J Platforms");
         console.println();
         platforms.describe().print(System.out);
         console.println();
 
-        var ledConfig = DigitalOutput.newConfigBuilder(pi4j)
-                        .id("led")
-                        .name("LED Flasher")
-                        .address(PIN_LED)
-                        .shutdown(DigitalState.LOW)
-                        .initial(DigitalState.LOW)
-                        .provider("pigpio-digital-output");
+        SpiConfig spiConfig = Spi.newConfigBuilder(pi4j)
+                .id("NANO")
+                .address(1)
+                .baud(400000)
+                .mode(SpiMode.MODE_0)
+                .bus(SpiBus.BUS_0)
+                .build();
 
-        var led = pi4j.create(ledConfig);
-        int counter = 0;
-        while (counter < 50) {
-            if (led.equals(DigitalState.HIGH)) {
-                led.low();
-                System.out.println("low");
-            } else {
-                led.high();
-                System.out.println("high");
+        try (Spi arduinoSpi = pi4j.create(spiConfig)) {
+            console.clearScreen();
+            console.box("SPI");
+            console.println();
+            console.println("SPI: " + arduinoSpi);
+            console.println();
+
+            console.box("SPI Configuration");
+            console.println();
+            console.println("SPI Configuration: " + arduinoSpi.config());
+            console.println();
+
+            console.box("SPI Provider");
+            console.println();
+            console.println("SPI Provider: " + arduinoSpi.provider());
+            console.println();
+
+            console.box("SPI READ/WRITE");
+            while (true) {
+                // byte data[] = new byte[40];
+                // data[0] = 0x10;
+                ByteBuffer data = ByteBuffer.allocate(40);
+                data.put((byte) 0x10);
+                console.println(Arrays.toString(data.array()));
+                Instant start = Instant.now();
+                arduinoSpi.transfer(data, 0, 36);
+                String str = Arrays.toString(data.array());
+                Instant end = Instant.now();
+                Duration elapsed = Duration.between(start, end);
+                console.println("SPI READ/WRITE: " + str + " in " + elapsed.toMillis() + " ms");
+                Thread.sleep(2000 - elapsed.toMillis());
             }
-            Thread.sleep(500);
-            counter++;
         }
     }
-
 }

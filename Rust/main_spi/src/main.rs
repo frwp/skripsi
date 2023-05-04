@@ -51,10 +51,14 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
         println!("{data}");
 
-        client
-            .post("http://34.28.200.114/api")
+        let res = client
+            .post("http://192.168.8.185/api")
             .form(&post_form)
             .send().await;
+
+        if let Err(error) = res {
+            println!("Error sending message {:?}", error)
+        }
         
         let elapsed = time_start.elapsed();
 

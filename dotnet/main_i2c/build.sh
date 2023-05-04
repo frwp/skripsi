@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 echo "Building package..."
 dotnet publish -c Release -r linux-arm --self-contained true
@@ -7,7 +7,7 @@ echo "Building done."
 
 host1="pi@192.168.8.179"
 host2="pi@192.168.4.2"
-host3="pi@10.6.176.158"
+host3="pi@10.6.187.111"
 check_connection="ssh -o ConnectTimeout=1 -q"
 
 echo "Checking connection..."
@@ -31,9 +31,9 @@ echo "Transfering executable to Raspberry Pi..."
 
 if command -v rsync &> /dev/null
 then
-    rsync -P --rsh=ssh $(pwd)/bin/Release/net6.0/linux-arm/publish/* ${working_host}:~/skripsi/dotnet/spi/
+    rsync -P --rsh=ssh $(pwd)/bin/Release/net6.0/linux-arm/publish/* ${working_host}:~/skripsi/dotnet/i2c/
 else
-    scp $(pwd)/bin/Release/net6.0/linux-arm/publish/* ${working_host}:~/skripsi/dotnet/spi/
+    scp $(pwd)/bin/Release/net6.0/linux-arm/publish/* ${working_host}:~/skripsi/dotnet/i2c/
 fi
 
 if [[ $? -ne 0 ]]; then

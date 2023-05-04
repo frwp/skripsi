@@ -89,7 +89,7 @@ class ReaderWriter
 
         FormUrlEncodedContent payload = new FormUrlEncodedContent(postData);
 
-        await PostAsync(client, "http://34.28.200.114/api", payload);
+        await PostAsync(client, "http://192.168.8.185/api", payload);
 
     }
 
