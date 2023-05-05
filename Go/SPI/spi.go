@@ -22,7 +22,7 @@ func main() {
 	host.Init()
 
 	// open the next available "port" (usually /dev/spidev0.0 or /dev/spidev0.1)
-	port, err := spireg.Open("")
+	port, err := spireg.Open("/dev/spidev0.0")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -41,7 +41,7 @@ func main() {
 	counter := 0
 
 	// forever loop
-	for counter < 1905 {
+	for counter < 500 {
 		// start counting time
 		start_time := time.Now()
 

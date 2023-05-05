@@ -19,7 +19,7 @@ public class Main_I2C
         try
         {
             timer2.Start();
-            while (TimeSpan.FromHours(1) > timer2.Elapsed)
+            while (TimeSpan.FromMinutes(14) > timer2.Elapsed)
             {
                 timer.Start();
 

@@ -6,7 +6,7 @@ mkdir -p target
 mv main_i2c target/main_i2c
 echo "Building done."
 
-host1="pi@192.168.8.141"
+host1="pi@192.168.8.179"
 host2="pi@192.168.4.2"
 host3="pi@10.6.185.207"
 check_connection="ssh -o ConnectTimeout=1 -q"

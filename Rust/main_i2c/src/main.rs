@@ -38,7 +38,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
     let timer = time::Instant::now();
 
-    while timer.elapsed() <= time::Duration::from_secs(3605) {
+    while timer.elapsed() <= time::Duration::from_secs(900) {
         // get current time for measuring elapsed time during i2c read
         let time_start = time::Instant::now();
 
@@ -69,7 +69,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
         println!("{data}");
 
         let res = client
-            .post("http://34.28.200.114/api")
+            .post("http://192.168.8.185/api")
             .form(&post_form)
             .send()
             .await;

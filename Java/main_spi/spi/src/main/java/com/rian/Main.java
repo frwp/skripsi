@@ -64,7 +64,7 @@ public class Main {
 
         SpiConfig spiConfig = Spi.newConfigBuilder(pi4j)
                 .id("NANO")
-                .address(1)
+                .address(0)
                 .baud(400000)
                 .mode(SpiMode.MODE_0)
                 .bus(SpiBus.BUS_0)

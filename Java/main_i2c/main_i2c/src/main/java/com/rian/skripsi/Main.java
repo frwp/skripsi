@@ -70,7 +70,21 @@ public class Main {
             console.clearScreen();
 
             console.box("I2C READ/WRITE");
-            while (true) {
+
+            final Thread thisThread = Thread.currentThread();
+            new Thread(new Runnable() {
+                public void run() {
+                    try {
+                        Thread.sleep(900000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                        Thread.currentThread().interrupt();
+                        thisThread.interrupt();
+                    }
+                }
+            }).start();
+
+            while (!Thread.interrupted()) {
                 HttpURLConnection con = (HttpURLConnection) url.openConnection();
                 con.setRequestMethod("POST");
                 con.setDoOutput(true);

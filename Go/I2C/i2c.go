@@ -39,7 +39,7 @@ func main() {
 	// run program for 1 hour or else
 	// forever loop
 	watch := time.Now()
-	for time.Since(watch) < time.Hour+time.Second*5 {
+	for time.Since(watch) < time.Minute*15 {
 		// start counting time
 		start_time := time.Now()
 
@@ -68,7 +68,7 @@ func main() {
 		}
 
 		// run in goroutine to not block the loop
-		go sendData("http://34.28.200.114/api", formData)
+		go sendData("http://192.168.8.185/api", formData)
 
 		time.Sleep(time.Second*2 - elapsed)
 	}
