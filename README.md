@@ -1,10 +1,9 @@
 # Repo untuk project skripsi Rian
 
-Halo, namaku Fransiskus Rian Wardana Putra\
-repo ini untuk mengarsipkan skripsiku.
+Repositori ini milik Fransiskus Rian Wardana Putra,\
+dibuat untuk mengarsipkan tugas akhir untuk menyelesaikan studi S1
 
-Readme ini dibuat biar ngga lupa aja apa yang jadi setting default di project ini.\
-Anyway, ini spek dasar:
+spesifikasi dasar dalam proyek:
 | Var           | Value         |
 | ---           | ---           |
 | Freq          | 20,000,000*   |
@@ -37,9 +36,13 @@ CE0             ->  D10 (SS)
 
 ## Programming language for arduino
 Of course use arduino IDE, why bother use other language, as arduino already use C++ base
+Untuk memprogram Arduino Nano digunakan Arduino IDE yang menggunakan format file .ino
+yang sebenarnya hanyalah C++ dengan banyak setting default dari Arduino.
 
 Arduino file used for I2C is test_analog, because I can only make the device works using
 ADXL335 sensor, which uses analog interface, and not MPU6050.
+Skripsi ini akhirnya menggunakan sensor gyro ADXL335 yang menggunakan analog output
+karena MPU6050 tidak dapat bekerja dengan baik (atau saya yang tidak bisa membuatnya bekerja).
 
 ## Programming language for raspi
 
@@ -102,7 +105,10 @@ sama saja kita menulis C. Kenapa tidak sekalian C saja?
 
 ---
 Kemudian mulailah perjalanan mencari library yang bisa akses pin gpio dan hardware SPI dan I2C
-> *Bit banging is a NO NO*
+> *Bit banging is a NO NO* \
+> Menghindari library yang menggunakan metode **bit banging** untuk berkomunikasi dengan SPI dan I2C
+dan menggunakan library yang mampu mengakses hardware SPI dan I2C pada arduino dan raspberry pi.
+
 
 ## C
 ### Preparing WiringPi library for Raspberry Pi
