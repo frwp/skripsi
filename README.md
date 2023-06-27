@@ -170,3 +170,10 @@ Program yang dibuat dengan bahasa Javascript memerlukan runtime agar dapat berja
 
 Interpreter Python sudah terpasang di Raspberry Pi OS, akan tetapi versi yang digunakan adalah Python 3, sedangkan yang sudah pasti terpasang di Raspberry Pi OS adalah Python 2. Untuk memeriksa apakah Python 3 sudah terpasang dapat menggunakan perintah python3 di terminal. Apabila muncul error bash: python3: command not found, artinya Python 3 belum terpasang. Untuk memasang Python 3, dapat menggunakan perintah sudo apt install python3.
 Setelah semua runtime dan environment terpasang, dilanjutkan dengan implementasi untuk masing-masing protokol.
+
+
+## `run.sh` file
+
+In each language's directory there is a run.sh file. 
+> The run.sh file assumes the main file is located in the same dir. Put the run.sh
+in the same dir as main executable file, or modify the path in the run.sh file.
