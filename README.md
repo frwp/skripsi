@@ -36,12 +36,12 @@ CE0             ->  D10 (SS)
 
 ## Programming language for arduino
 Of course use arduino IDE, why bother use other language, as arduino already use C++ base
-Untuk memprogram Arduino Nano digunakan Arduino IDE yang menggunakan format file .ino
+> Untuk memprogram Arduino Nano digunakan Arduino IDE yang menggunakan format file .ino
 yang sebenarnya hanyalah C++ dengan banyak setting default dari Arduino.
 
 Arduino file used for I2C is test_analog, because I can only make the device works using
 ADXL335 sensor, which uses analog interface, and not MPU6050.
-Skripsi ini akhirnya menggunakan sensor gyro ADXL335 yang menggunakan analog output
+> Skripsi ini akhirnya menggunakan sensor gyro ADXL335 yang menggunakan analog output
 karena MPU6050 tidak dapat bekerja dengan baik (atau saya yang tidak bisa membuatnya bekerja).
 
 ## Programming language for raspi
