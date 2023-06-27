@@ -54,10 +54,7 @@ print(keys)
 def parse_data(csv_files):
     dataframes = []
     for f in csv_files:
-        """
-        File csv memiliki format nama file: <tipe data>-<protokol>-<language>.csv
-
-        """
+        # File csv memiliki format nama file: <tipe data>-<protokol>-<language>.csv
         split = f.removesuffix('.csv').split('-')
         m_type = split[0]
         protocol = split[1]
@@ -106,8 +103,22 @@ def parse_data(csv_files):
     for i, df_i in enumerate(dataframes):
         for j, df_j in enumerate(dataframes):
             if i < j and df_i[:2] == df_j[:2]:
-                new_dataframes.append((df_i[0], df_i[1], pd.concat([df_i[3], df_j[3]], axis=1)[['program_name', 'rss', 'pcpu', 'volt', 'ampere']]))
-    return new_dataframes
+                new_dataframes.append(
+                    (
+                        df_i[0], 
+                        df_i[1], 
+                        pd.concat(
+                            [
+                                df_i[3], 
+                                df_j[3]
+                            ], 
+                            axis=1
+                        )[['program_name', 'rss', 'pcpu', 'volt', 'ampere']]
+                    )
+                )
+    merged_df = pd.concat([x[2] for x in new_dataframes], keys=[(x[1], x[0]) for x in new_dataframes], names=['protocol', 'language', 'index'])
+    merged_df['watt'] = merged_df['volt'] * merged_df['ampere']
+    return merged_df
 
 
 """
@@ -118,11 +129,7 @@ Data waktu respons tidak digabungkan dengan data yang lain karena perbedaan dime
 data_response = pd.read_excel(os.path.join(base_dir, "analisis skripsi.xlsx"), header=0, index_col=[0, 1, 2])
 print(data_response)
 
-dataframes = parse_data(csv_files)
-
-
-merged_df = pd.concat([x[2] for x in dataframes], keys=[(x[1], x[0]) for x in dataframes], names=['protocol', 'language', 'index'])
-merged_df['watt'] = merged_df['volt'] * merged_df['ampere']
+merged_df = parse_data(csv_files)
 
 print(merged_df)
 
@@ -162,6 +169,7 @@ merged_stats = write_stats_to_excel(keys, excel_stats_file)
 ### All cpu and ram
 """
 
+# Data tanpa batasan pada sumbu y
 fig, (spi_ax, i2c_ax) = plt.subplots(2, 1, figsize=(12, 9))
 fig.suptitle('SPI vs I2C cpu usage')
 
@@ -173,6 +181,7 @@ sb.lineplot(data=merged_df.loc['I2C'], x='index', y='pcpu', hue='language', hue_
 
 plt.show()
 
+# Data dengan batasan pada sumbu y = [0%, 10%]
 fig, (spi_ax, i2c_ax) = plt.subplots(2, 1, figsize=(12, 9))
 fig.suptitle('SPI vs I2C cpu usage')
 

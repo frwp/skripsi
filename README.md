@@ -183,3 +183,7 @@ Setelah semua runtime dan environment terpasang, dilanjutkan dengan implementasi
 In each language's directory there is a run.sh file. 
 > The run.sh file assumes the main file is located in the same dir. Put the run.sh
 in the same dir as main executable file, or modify the path in the run.sh file.
+
+## Used external link
+1. https://colab.research.google.com/drive/1ZdGBr1nO6cmeTg9sc50Pu0r0Mwueq0It?usp=sharing -> OCR dari video ke teks csv
+2. https://colab.research.google.com/drive/1zkEgY9szPDW0qkKjZpCtEG9pfxEDEt2Q?usp=sharing -> the data
